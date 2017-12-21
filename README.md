@@ -56,11 +56,11 @@ In your composer.json:
 ```json
 {
 	"require": {
-		"hpar/prestashop-bridge": "dev-master"
+		"mahjouba91/prestashop-bridge": "dev-master"
 	},
 	"repositories": [{
 		"type": "vcs",
-		"url": "https://github.com/hparfr/prestashopBridge.git"
+		"url": "https://github.com/Mahjouba91/prestashopBridge.git"
 	}]
 }
 ```
