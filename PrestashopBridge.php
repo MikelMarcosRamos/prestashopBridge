@@ -132,6 +132,26 @@ class PrestashopBridge {
 		else
 			return false;
 	}
+	
+	public function updateUserPassword( $email, $new_pass ) {
+		
+		if (! \Customer::customerExists($email)) {
+			return false;
+		}
+		
+		$customer = new \Customer();
+		$authentication = $customer->getByEmail($email);
+
+		if (!$authentication) //user doesn't exist
+			return false;
+		
+		$customer->passwd = $new_pass;
+
+		if ($customer->update())
+			return true;
+		else
+			return false;
+	}
 
 	public function logout() {
 
