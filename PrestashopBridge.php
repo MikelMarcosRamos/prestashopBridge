@@ -1,9 +1,8 @@
 <?php
 
-namespace Hpar\PrestashopBridge;
+namespace Mahjouba91\PrestashopBridge;
 
 use Symfony\Component\HttpFoundation\Request;
-
 
 class PrestashopBridge {
 
