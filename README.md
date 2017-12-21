@@ -79,7 +79,7 @@ namespace Acme\DemoBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Hpar\PrestashopBridge\PrestashopBridge;
+use Mahjouba91\PrestashopBridge\PrestashopBridge;
 
 class PrestashopBridgeExampleController extends Controller
 {
