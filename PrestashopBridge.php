@@ -127,7 +127,6 @@ class PrestashopBridge {
 		$customer->firstname = $firstname;
 		$customer->lastname = $lastname;
 		$customer->email = $email;
-		$customer->active = 1;
 		$customer->passwd  = $password ? $password : md5(bin2hex(openssl_random_pseudo_bytes(10)));
 
 		if ($customer->add())
