@@ -47,8 +47,9 @@ class PrestashopBridge {
 	}
 
 	/**
-	* @param string email
-	*/
+	 * @param string $email
+	 * @return bool
+	 */
 	public function userExist($email) {
 
 		$customer = new \Customer();
@@ -60,8 +61,9 @@ class PrestashopBridge {
 	}
 
 	/**
-	* @param string email
-	*/
+	 * @param string $email
+	 * @return bool
+	 */
 	public function login($email) {
 
 		$customer = new \Customer();
@@ -106,12 +108,14 @@ class PrestashopBridge {
 	}
 
 	/**
-	* @param string email
-	* @param string lastname
-	* @param string firstname
-	* @param string password : md5 string or null
-	* if password = null, login will only be possible by the current bridge
-	*/
+	 * if password = null, login will only be possible by the current bridge
+	 *
+	 * @param string $email
+	 * @param string $lastname
+	 * @param string $firstname
+	 * @param string $password : md5 string or null
+	 * @return bool
+	 */
 	public function createUser($email, $lastname, $firstname, $password = null) {
 
 		if (\Customer::customerExists($email)) {
@@ -132,7 +136,14 @@ class PrestashopBridge {
 		else
 			return false;
 	}
-	
+
+	/**
+	 * Update User Password from Prestashop
+	 *
+	 * @param $email
+	 * @param $new_pass
+	 * @return bool
+	 */
 	public function updateUserPassword( $email, $new_pass ) {
 		
 		if (! \Customer::customerExists($email)) {
@@ -163,7 +174,7 @@ class PrestashopBridge {
 	/**
 	* add a product to the cart with quantity and a reference
 	* @param int idProduct
-	* @param in quantity
+	* @param int quantity
 	* @param string ref
 	*/
 	public function addToCurrentCart($idProduct, $quantity = 1, $ref = null) {
@@ -188,8 +199,9 @@ class PrestashopBridge {
 				if ($qtyDiff !== 0)
 					$cart->updateQty( abs($qtyDiff), $idProduct, null, $custom['id_customization'], $upOrDown);
 			}
-		} else
+		} else {
 			$cart->updateQty($quantity, $idProduct);
+		}
 	}
 
 
