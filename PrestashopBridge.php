@@ -115,7 +115,7 @@ class PrestashopBridge {
 	 * @param string $password : md5 string or null
 	 * @return bool
 	 */
-	public function createUser($email, $lastname, $firstname, $password = null) {
+	public function createUser($email, $lastname = '', $firstname = '', $password = null) {
 
 		if (\Customer::customerExists($email)) {
 			return false;
@@ -124,11 +124,15 @@ class PrestashopBridge {
 		$customer = new \Customer();
 
 		$customer->active = 1;
-		$customer->firstname = $firstname;
-		$customer->lastname = $lastname;
 		$customer->email = $email;
 		$customer->passwd  = $password ? $password : md5(bin2hex(openssl_random_pseudo_bytes(10)));
-
+		if ( ! empty( $firstname ) ) {
+			$customer->firstname = $firstname;
+		}
+		if ( ! empty( $lastname ) ) {
+			$customer->lastname = $lastname;
+		}
+		
 		if ($customer->add())
 			return true;
 		else
