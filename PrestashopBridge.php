@@ -126,11 +126,16 @@ class PrestashopBridge {
 		$customer->active = 1;
 		$customer->email = $email;
 		$customer->passwd  = $password ? $password : md5(bin2hex(openssl_random_pseudo_bytes(10)));
-		if ( ! empty( $firstname ) ) {
-			$customer->firstname = $firstname;
+
+		$customer->firstname = $firstname;
+		$customer->lastname = $lastname;
+		// Firstname and Lastname can not be empty in Prestashop Customer table
+		$temporary_name = explode( '@', $email );
+		if ( empty( $firstname ) ) {
+			$customer->firstname = $temporary_name[0];
 		}
-		if ( ! empty( $lastname ) ) {
-			$customer->lastname = $lastname;
+		if ( empty( $lastname ) ) {
+			$customer->lastname = $temporary_name[0];
 		}
 		
 		if ($customer->add())
