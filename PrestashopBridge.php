@@ -125,7 +125,7 @@ class PrestashopBridge {
 
 		$customer->active = 1;
 		$customer->email = $email;
-		$customer->passwd  = $password ? $password : md5(bin2hex(openssl_random_pseudo_bytes(10)));
+		$customer->passwd  = $password ? md5(_COOKIE_KEY_.$password) : md5(bin2hex(openssl_random_pseudo_bytes(10)));
 
 		$customer->firstname = $firstname;
 		$customer->lastname = $lastname;
@@ -163,7 +163,7 @@ class PrestashopBridge {
 		if (!$authentication) //user doesn't exist
 			return false;
 		
-		$customer->passwd = $new_pass;
+		$customer->passwd  = md5(_COOKIE_KEY_.$new_pass);
 
 		if ($customer->update())
 			return true;
