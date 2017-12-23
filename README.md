@@ -187,7 +187,7 @@ function cbl_add_customer( $params, $user_id ) {
 }
 
 function cbl_get_prestashop_path () {
-	returnrealpath( ABSPATH . 'shop/' );
+	return realpath( ABSPATH . 'shop/' );
 }
 
 
