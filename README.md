@@ -107,3 +107,88 @@ class PrestashopBridgeExampleController extends Controller
 }
 
 ```
+
+In a WordPress plugin:
+
+```php
+<?php
+/**
+* Plugin Name: Prestashop Bridge
+* Description: Handle registration/login between PrestaShop and WordPress
+* Version: 1.0
+* Author: Florian TIAR
+* Author URI: http://wpstrategie.fr
+* License: GPL2 license
+*/
+
+// don't load directly
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
+
+require( ABSPATH . '/vendor/autoload.php' );
+use Mahjouba91\PrestashopBridge\PrestashopBridge;
+
+// Hook after a new user is registred
+add_action( 'user_register', function( $user_id ) {
+	// If it's a front registration, wait the email validation because the user don't choose any password yet
+	if ( ! isset( $_POST['pass1'] ) ) {
+		return;
+	}
+	// For backend registration, create prestashop account now
+	cbl_add_customer( $_POST, $user_id );
+}, 10, 1 );
+
+// After password reset
+add_action( 'after_password_reset', function( $user, $new_pass ) {
+	$presta_path = cbl_get_prestashop_path();
+	$prestaBridge = new PrestashopBridge( $presta_path, 1 );
+	if ( $prestaBridge->userExist( $user->user_email ) ) {
+		// The user want to update its password, do it also on PrestaShop
+		$prestaBridge->updateUserPassword( $user->user_email, $new_pass );
+	} else {
+		// It's a new user, so create it on PrestaShop
+		$prestaBridge->createUser( $user->user_email, $user->last_name, $user->first_name, $new_pass );
+	}
+}, 10, 2 );
+
+// After WordPress login, login the user in PrestaShop too
+add_action( 'wp_login', function( $user_login, $user ) {
+	$logger = new Bea_Log( WP_CONTENT_DIR . '/presta' );
+	$logger->log_this( 'wp_login hook', Bea_Log::gravity_0 );
+
+	$presta_path = cbl_get_prestashop_path();
+	$prestaBridge = new PrestashopBridge( $presta_path, 1 );
+	$login = $prestaBridge->login( $user->user_email );
+	$logger->log_this( 'login : ' . $login, Bea_Log::gravity_0 );
+
+}, 10, 2 );
+
+// After WordPress logout, logout the user in PrestaShop too
+add_action( 'wp_logout', function() {
+	$logger = new Bea_Log( WP_CONTENT_DIR . '/presta' );
+	$logger->log_this( 'wp_logout hook', Bea_Log::gravity_0 );
+
+	$presta_path = cbl_get_prestashop_path();
+	$prestaBridge = new PrestashopBridge( $presta_path, 1 );
+	$prestaBridge->logout();
+});
+
+function cbl_add_customer( $params, $user_id ) {
+	$user = get_userdata( $user_id );
+	$presta_path = cbl_get_prestashop_path();
+	$prestaBridge = new PrestashopBridge( $presta_path, 1 );
+	if ( $prestaBridge->userExist( $user->user_email ) ) {
+		return false;
+	}
+	
+	$prestaBridge->createUser( $user->user_email, $user->last_name, $user->first_name, $params['pass1'] );
+	return true;
+}
+
+function cbl_get_prestashop_path () {
+	returnrealpath( ABSPATH . 'shop/' );
+}
+
+
+```
