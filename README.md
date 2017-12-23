@@ -14,6 +14,7 @@ Benefits:
 Features:
 
  - Login / Logout customers
+ - Reset user password
  - Create customers
  - Create carts
 
@@ -39,6 +40,7 @@ Fonctionnalités :
 
 - connecter un client
 - déconnecter un client
+- changement de mot de passe du client synchronisé vers le PrestaShop
 - créer des clients dans la base de prestashop
 - créer des commandes (optionnellement avec des références)
 
