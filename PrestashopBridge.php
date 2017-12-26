@@ -106,6 +106,13 @@ class PrestashopBridge {
 		return true;
 	}
 
+	public function logout() {
+
+		$ctx = \Context::getContext();
+		if ($ctx)
+			$ctx->customer->logout();
+	}
+
 	/**
 	 * if password = null, login will only be possible by the current bridge
 	 *
@@ -124,6 +131,7 @@ class PrestashopBridge {
 		$customer = new \Customer();
 
 		$customer->active = 1;
+		$customer->id_gender = 1;
 		$customer->email = $email;
 		$customer->passwd  = $password ? md5(_COOKIE_KEY_.$password) : md5(bin2hex(openssl_random_pseudo_bytes(10)));
 
@@ -137,7 +145,7 @@ class PrestashopBridge {
 		if ( empty( $lastname ) ) {
 			$customer->lastname = $temporary_name[0];
 		}
-		
+
 		if ($customer->add())
 			return true;
 		else
@@ -158,24 +166,13 @@ class PrestashopBridge {
 		}
 		
 		$customer = new \Customer();
-		$authentication = $customer->getByEmail($email);
-
-		if (!$authentication) //user doesn't exist
-			return false;
-		
+		$customer = $customer->getByEmail($email);
 		$customer->passwd  = md5(_COOKIE_KEY_.$new_pass);
 
 		if ($customer->update())
 			return true;
 		else
 			return false;
-	}
-
-	public function logout() {
-
-		$ctx = \Context::getContext();
-		if ($ctx)
-			$ctx->customer->logout();
 	}
 
 	/**
@@ -210,6 +207,5 @@ class PrestashopBridge {
 			$cart->updateQty($quantity, $idProduct);
 		}
 	}
-
 
 }
