@@ -143,34 +143,18 @@ add_action( 'user_register', function( $user_id ) {
 
 // After password reset
 add_action( 'after_password_reset', function( $user, $new_pass ) {
-	$presta_path = cbl_get_prestashop_path();
-	$prestaBridge = new PrestashopBridge( $presta_path, 1 );
-	if ( $prestaBridge->userExist( $user->user_email ) ) {
-		// The user want to update its password, do it also on PrestaShop
-		$prestaBridge->updateUserPassword( $user->user_email, $new_pass );
-	} else {
-		// It's a new user, so create it on PrestaShop
-		$prestaBridge->createUser( $user->user_email, $user->last_name, $user->first_name, $new_pass );
-	}
+	cbl_add_customer( array( 'pass1' => $new_pass ), $user->ID );
 }, 10, 2 );
 
 // After WordPress login, login the user in PrestaShop too
 add_action( 'wp_login', function( $user_login, $user ) {
-	$logger = new Bea_Log( WP_CONTENT_DIR . '/presta' );
-	$logger->log_this( 'wp_login hook', Bea_Log::gravity_0 );
-
 	$presta_path = cbl_get_prestashop_path();
 	$prestaBridge = new PrestashopBridge( $presta_path, 1 );
 	$login = $prestaBridge->login( $user->user_email );
-	$logger->log_this( 'login : ' . $login, Bea_Log::gravity_0 );
-
 }, 10, 2 );
 
 // After WordPress logout, logout the user in PrestaShop too
 add_action( 'wp_logout', function() {
-	$logger = new Bea_Log( WP_CONTENT_DIR . '/presta' );
-	$logger->log_this( 'wp_logout hook', Bea_Log::gravity_0 );
-
 	$presta_path = cbl_get_prestashop_path();
 	$prestaBridge = new PrestashopBridge( $presta_path, 1 );
 	$prestaBridge->logout();
@@ -184,12 +168,21 @@ function cbl_add_customer( $params, $user_id ) {
 		return false;
 	}
 	
+	$lastname = $user->last_name;
+	$firstname = $user->first_name;
+	if ( empty( $user->last_name ) ) {
+		$lastname = $user->user_login;
+	}
+	if ( empty( $user->last_name ) ) {
+		$firstname = $user->user_login;
+	}
+	
 	$prestaBridge->createUser( $user->user_email, $user->last_name, $user->first_name, $params['pass1'] );
 	return true;
 }
 
 function cbl_get_prestashop_path () {
-	return realpath( ABSPATH . 'shop/' );
+	return realpath( ABSPATH . 'path/to/prestashop/' );
 }
 
 
