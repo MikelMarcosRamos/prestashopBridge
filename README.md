@@ -160,6 +160,18 @@ add_action( 'wp_logout', function() {
 	$prestaBridge->logout();
 });
 
+/**
+ * Set a minimum password to 5 chars like PrestaShop do
+ * In order to fix this bug : if a WP User password is less than 5 chars, you can't login with those credentials in PrestaShop because Presta requires a minimum of 5 chars
+ */
+add_action( 'validate_password_reset' , function( $errors, $user ) {
+	if ( isset( $_POST['pass1'] ) ) {
+		if ( strlen( $_POST['pass1'] ) < 5 ) {
+			$errors->add( 'password_too_short', 'ERREUR: Le mot de passe doit faire 5 caractères minimum.' );
+		}
+	}
+}, 10, 2 );
+
 function cbl_add_customer( $params, $user_id ) {
 	$user = get_userdata( $user_id );
 	$presta_path = cbl_get_prestashop_path();
