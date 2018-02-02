@@ -66,7 +66,8 @@ In your composer.json:
 	}]
 }
 ```
-
+Then, run a :
+```composer install```
 
 Example
 =====
